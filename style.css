@@ -1,38 +1,28 @@
-.top-bar {
+#trellists {
   float: left;
-  margin-top: 4px;
-}
-.top-bar ul {
-  background: #24688f;
+  background:rgba(0,0,0,.12);
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   padding: 3px;
+  display: none;
 }
-.top-bar li {
-  display: inline;
-  padding-right: 10px;
-  margin-bottom: 0;
+#trellists li {
+  display: inline-block;
+  float: left;
+  padding: 3px 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  margin: 0;
   cursor: pointer;
   font-size: 12px;
+  white-space: nowrap;
 }
-.top-bar li .name {
-  min-height: 19px;
-  min-width: 30px;
-}
-.top-bar li .name .list-total {
-  font-size: 60%;
-  vertical-align: super;
-  float: none;
-  color: #f6f6f6;
-}
-.list-id {
-  display: none;
-  color: black;
-}
-.top-bar .show-list .name {
-  color: #f6f6f6;
-}
-.top-bar .hide-list .name {
-  color: silver;
-}
+#trellists li:hover{background:rgba(0,0,0,.3)}
+#trellists .list-total {display: none;}
+#trellists .show-list {color: #f6f6f6;}
+#trellists .hide-list {color: silver;}
+
+
+
