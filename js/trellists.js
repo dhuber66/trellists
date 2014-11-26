@@ -2,6 +2,7 @@
 // TODO: Add ability to show all hidden Lists in one click.
 
 // TODO: 'just_logged_in' = true.
+// TODO: BUG: if lists has the same name they will be shown and hidden both at the same time.
 
 // Trello.com loads lists after whole page loaded and DOM is ready so we need to
 // wait for some DOM-elements appear on page and then react on this change.
@@ -59,11 +60,14 @@
     // This variable will collect all tabs in top menu.
     var li = '';
     // To count shown and hidden tabs we will use separate variables so we could switch 'Show all' and 'Hide all' tab.
+    // TODO: store number of hidden and shown tabs in global variable or LocalStorage and update 'All' button depending on those numbers.
     var shownTabs = hiddenTabs = 0;
     // Get all Lists at board except placeholder for new List creation to add them to the Bar.
     $('#board .list').each(function() {
       // Get only List's name without any sub-elements.
       var name = getListName($(this));
+      
+      // This check allows to skip 'Add new list' widget.
       if (name) {
         // Create the tab in Menu for current List.
         var tab = $('<li/>').attr('data-tab-name', name).text(name);
@@ -95,12 +99,12 @@
     });
 
     // Create the tab in Menu for current List.
-    var tab = $('<li/>').attr('data-tab-name', 'all');    
-    if (hiddenTabs == 0 && shownTabs !=0) {
-      tab.text('Hide all').addClass('show-all');
+    var tab = $('<li/>').attr('data-tab-name', 'all').text('Hide all').addClass('show-all');
+    if (hiddenTabs == 0 && shownTabs != 0) {
+      tab.text('Hide all').removeClass('hide-all').addClass('show-all');
     }
-    else if (hiddenTabs != 0 && shownTabs ==0) {
-      tab.text('Show all').addClass('hide-all');
+    if (hiddenTabs != 0 && shownTabs == 0) {
+      tab.text('Show all').removeClass('show-all').addClass('hide-all');
     }
     
     li += tab[0].outerHTML;
@@ -147,15 +151,22 @@
         // List tab was clicked.
         var status = $(this).hasClass('show-list') ? 'show-list' : 'hide-list';
         var $list = $("#board .list[data-list-name='" + tab +"']");
+        var allTab = $('#trellists li[data-tab-name=all]');
         //TODO: use jQuery .toggle instead code below.
         if (status == 'show-list') {
-          // Hide
+          // Hide related list
           $list.addClass('hide-list').removeClass('show-list').hide();
+          // Update current tab.
           $(this).addClass('hide-list').removeClass('show-list');
+          // Change 'Show all/Hide all' button.
+          allTab.text('Show all').removeClass('show-all').addClass('hide-all');          
         } else {
-          // Show
+          // Show related list
           $list.addClass('show-list').removeClass('hide-list').show();
+          // Update current tab.
           $(this).addClass('show-list').removeClass('hide-list');
+          // Change 'Show all/Hide all' button.
+          allTab.text('Hide all').removeClass('hide-all').addClass('show-all');
         }
       }
     }); // 'click' event handler ends here
