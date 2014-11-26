@@ -5,7 +5,6 @@
   -moz-border-radius: 3px;
   border-radius: 3px;
   padding: 3px;
-  display: none;
 }
 #trellists li {
   display: inline-block;
@@ -20,7 +19,6 @@
   white-space: nowrap;
 }
 #trellists li:hover{background:rgba(0,0,0,.3)}
-#trellists .list-total {display: none;}
 #trellists .show-list {color: #f6f6f6;}
 #trellists .hide-list {color: silver;}
 
