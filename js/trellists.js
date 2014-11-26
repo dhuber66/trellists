@@ -1,8 +1,7 @@
 // TODO: Store state of Lists in LocalStorage so you shouldn't set state each time you opened board.
-// TODO: Add ability to show all hidden Lists in one click.
-
 // TODO: 'just_logged_in' = true.
 // TODO: BUG: if lists has the same name they will be shown and hidden both at the same time.
+// TODO: Call calcBoardLayout(); when right menu hidden.
 
 // Trello.com loads lists after whole page loaded and DOM is ready so we need to
 // wait for some DOM-elements appear on page and then react on this change.
@@ -25,7 +24,7 @@
     }
 
     // Update Menu on List insert/archive/remove.
-    buildMenu();
+    renderMenu();
   });
 
   // Update  list name on change. Already optimized.
@@ -35,7 +34,7 @@
       // Somehow List title could be empty and we need to pass by this case.
       // Compare old title and new one to run only on title change but not subtree changes or etc.
       if (name && name != $(this).parent().parent().attr('data-list-name')) {
-        buildMenu();
+        renderMenu();
       }
     });
   });
@@ -43,7 +42,7 @@
   // Update on List's drag-n-drop movements.
   $('#board .placeholder').waitUntilExists(function() {
     $('#board .placeholder').bind('DOMNodeRemovedFromDocument', function(e) {
-      buildMenu();
+      renderMenu();
     });
   });
 
@@ -51,12 +50,24 @@
   function getListName(list) {
     return list.find('.list-header-name').clone().children().remove().end().text();
   }
+  
+  // This code was copied from trello's all.js file.
+  // https://d78fikflryjgj.cloudfront.net/js/0e1c2ed27cb817938de179d9d36a9043/all.js
+  var calcBoardLayout = function(){
+    var b,e,c,f;
+    f=$(window).height();
+    c=$("#header").outerHeight();
+    b=$(".header-banner:visible").outerHeight();
+    e=this.$(".board-header").outerHeight();
+    this.$(".board-canvas").height(f-(c+b+e));
+    //this.calcSidebarHeight();
+  };
 
   /**
    * Build Top Bar which shows titles of existing lists.
    * Each time new list created ate page we rebuild top bar.
    */
-  function buildMenu() {
+  function renderMenu() {
     // This variable will collect all tabs in top menu.
     var li = '';
     // To count shown and hidden tabs we will use separate variables so we could switch 'Show all' and 'Hide all' tab.
@@ -114,8 +125,7 @@
     
     // If number of list are huge we need to manually resize window so 'Add new card...' widget 
     // and horizontall scroll bar will be shown at the bottom.
-    // TODO: code below doesn't work in extension but works fine in browser's console:
-    // $(windows).trigger('resize');
+    calcBoardLayout();
 
     // Hides/shows List on click at tab.
     // We need to attach onClick behaviour for newly created tabs just after they was added to DOM
@@ -145,7 +155,7 @@
           });
         } 
         // Rebuild menu to set correct status.
-        buildMenu();
+        renderMenu();
       }
       else {
         // List tab was clicked.
