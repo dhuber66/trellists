@@ -7,7 +7,7 @@
       "js/jquery.waituntilexists.min.js",
       "js/trellists.js"
     ],
-    "matches": [ "\u003Call_urls>" ],
+    "matches": [ "*://trello.com/*" ],
     "run_at": "document_start"
   }],
   "permissions": [ "tabs", "\u003Call_urls>" ],
@@ -18,7 +18,7 @@
   "description": "Allow to hide and show lists at Trello's boards.",
   "update_url": "http://clients2.google.com/service/update2/crx",
    "author": "Vlad Savitsky",
-  "version": "2.0",
+  "version": "2.1",
   "icons": {
     "128": "icons/trellists.png",
     "16": "icons/trellists.png",

@@ -20,6 +20,7 @@
 }
 #trellists li:hover{background:rgba(0,0,0,.3)}
 #trellists .show-list {color: #f6f6f6;}
+#trellists .show-all, #trellists .hide-all {color: black;}
 #trellists .hide-list {color: silver;}
 
 
