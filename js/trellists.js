@@ -2,9 +2,12 @@
 // TODO: store state of Lists in LocalStorage.
 // TODO: add a 'Show all' button.
 
+// TODO: 'just_logged_in' = true.
+
 // Trello.com loads lists after whole page loaded and DOM is ready so we need to
 // wait for some DOM-elements appear on page and then react on this change.
 // Custom jQuery plugin was used to wait while required DOM-element will be created.
+// See https://gist.github.com/md55/6565078
 
 (function() {
 
