@@ -1,17 +1,22 @@
 {
-   "content_scripts": [ {
-      "css": [ "trello_top_bar.css" ],
-      "js": [ "jquery-1.7.1.min.js", "trello_top_bar.js" ],
-      "matches": [ "https://trello.com/*" ]
-   } ],
-   "description": "Allow you to hide and show lists at Trello.com",
-   "icons": {
-      "128": "icon-128.png",
-      "32": "icon-32.png",
-      "48": "icon-48.png"
-   },
-   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzfiXS6Li03uSvMv1bBfQBn8DgKdJ8a3JoD5EyA9PQQi1TdPykdwd2ughWLa/Jng31tBeEwp7PGnA0ZC8p2KYdZ9sUt1YpbircUFuylYEKZnw0Z06YCdIvusUwPFWFydy0u8nggyY8I5E5f0IDTAQ5ERmXM51QuR6jou5VflMISwIDAQAB",
-   "name": "Trello Top Bar",
-   "update_url": "http://clients2.google.com/service/update2/crx",
-   "version": "0.1"
+  "name": "Top Bar for Trello.com",
+  "description": "Hide and show lists at Trello.com site.",
+  "version": "1.0",
+  "manifest_version": 2,
+  "content_scripts": [ {
+    "css": ["style.css"],
+    "js": [ 
+      "js/jquery-1.8.0.min.js", 
+      "js/content.js" 
+    ],
+    "matches": [
+      "https://trello.com/*"
+    ]
+  } ],
+  "icons": {
+    "128": "icons/icon_128.png",
+    "48": "icons/icon_48.png",
+    "32": "icons/icon_32.png",
+    "16": "icons/icon_16.png"
+  }
 }
