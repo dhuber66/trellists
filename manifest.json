@@ -14,7 +14,7 @@
   "name": "Trellists",
   "description": "Hides and shows Trello.com lists.",
   "update_url": "http://clients2.google.com/service/update2/crx",
-  "version": "1.3",
+  "version": "1.4",
   "icons": {
     "128": "icons/trellists.png",
     "16": "icons/trellists.png",

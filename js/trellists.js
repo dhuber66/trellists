@@ -20,9 +20,10 @@
   // Update  list name on change. Already optimized.
   $('.list h2.list-header-name').waitUntilExists(function() {
     $('.list h2.list-header-name').bind('DOMSubtreeModified', function() {
+      var name = getListName($(this).parent().parent());
       // Somehow List title could be empty and we need to pass by this case.
       // Compare old title and new one to run only on title change but not subtree changes or etc.
-      if ($(this).text() && $(this).text() != $(this).parent().parent().attr('data-list-name')) {
+      if (name && name != $(this).parent().parent().attr('data-list-name')) {
         buildTabs();
       }
     });
@@ -35,6 +36,11 @@
     });
   });
 
+  // Get List name.
+  function getListName(list) {
+    return list.find('.list-header-name').clone().children().remove().end().text();
+  }
+
   /**
    * Build Top Bar which shows titles of existing lists.
    * Each time new list created ate page we rebuild top bar.
@@ -44,7 +50,7 @@
     // Get all Lists at board except placeholder for new List creation to add them to the Bar.
     $('#board .list').each(function () {
       // Get only List's name without any sub-elements.
-      var name = $(this).find('.list-header-name').clone().children().remove().end().text();
+      var name = getListName($(this));
       if (name) {
         // Create the tab for those List.
         var tab = $('<li/>').addClass('show-list').attr('data-tab-name', name).text(name);
@@ -56,7 +62,7 @@
       }
     });
     // Replace tabs in the TabBar.
-    $('#trellists').hide().empty().fadeIn().append(li);
+    $('#trellists').empty().append(li).show();
 
     // Hides/shows List on click at tab.    
     // We need to attach onClick behaviour for newly created tabs just after they was added to DOM.
