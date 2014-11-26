@@ -85,6 +85,11 @@
           $(tab).addClass('hide-list');
           hiddenTabs ++;
         }
+        else {
+          // for just created lists
+          $(tab).addClass('show-list');
+          shownTabs ++;
+        }
         li += tab[0].outerHTML;
       }
     });
@@ -102,14 +107,17 @@
 
     // Replace tabs in the Menu.
     $('#trellists').empty().append(li);
+    
+    // If number of list are huge we need to manually resize window so 'Add new card...' widget 
+    // and horizontall scroll bar will be shown at the bottom.
+    // TODO: code below doesn't work in extension but works fine in browser's console:
+    // $(windows).trigger('resize');
 
     // Hides/shows List on click at tab.
     // We need to attach onClick behaviour for newly created tabs just after they was added to DOM
     // so we can't move out this code.
     $('#trellists li').click(function() {
       var tab = $(this).attr('data-tab-name');
-
-
       if (tab == 'all') {
         // 'Hide all/Show all' tab was clicked.
         // TODO: think how to avoid code duplication here.
@@ -150,7 +158,6 @@
           $(this).addClass('show-list').removeClass('hide-list');
         }
       }
-    });
+    }); // 'click' event handler ends here
   };
-
 }) ();
