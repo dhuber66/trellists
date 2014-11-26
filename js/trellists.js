@@ -1,6 +1,5 @@
-// TODO: when 'Points for Trello' changes header topBar updates and loose status of list. We should get this status from original List when rebuild topBar.
-// TODO: store state of Lists in LocalStorage.
-// TODO: add a 'Show all' button.
+// TODO: Store state of Lists in LocalStorage so you shouldn't set state each time you opened board.
+// TODO: Add ability to show all hidden Lists in one click.
 
 // TODO: 'just_logged_in' = true.
 
@@ -57,7 +56,10 @@
    * Each time new list created ate page we rebuild top bar.
    */
   function buildMenu() {
+    // This variable will collect all tabs in top menu.
     var li = '';
+    // To count shown and hidden tabs we will use separate variables so we could switch 'Show all' and 'Hide all' tab.
+    var shownTabs = hiddenTabs = 0;
     // Get all Lists at board except placeholder for new List creation to add them to the Bar.
     $('#board .list').each(function() {
       // Get only List's name without any sub-elements.
@@ -77,30 +79,76 @@
         // Set default status 'show-list' and change it only if actual List has status.
         if ($(this).hasClass('show-list')) {
           $(tab).addClass('show-list');
+          shownTabs ++;
         }
         else if ($(this).hasClass('hide-list')) {
           $(tab).addClass('hide-list');
+          hiddenTabs ++;
         }
         li += tab[0].outerHTML;
       }
     });
 
+    // Create the tab in Menu for current List.
+    var tab = $('<li/>').attr('data-tab-name', 'all');    
+    if (hiddenTabs == 0 && shownTabs !=0) {
+      tab.text('Hide all').addClass('show-all');
+    }
+    else if (hiddenTabs != 0 && shownTabs ==0) {
+      tab.text('Show all').addClass('hide-all');
+    }
+    
+    li += tab[0].outerHTML;
+
     // Replace tabs in the Menu.
     $('#trellists').empty().append(li);
 
     // Hides/shows List on click at tab.
-    // We need to attach onClick behaviour for newly created tabs just after they was added to DOM.
+    // We need to attach onClick behaviour for newly created tabs just after they was added to DOM
+    // so we can't move out this code.
     $('#trellists li').click(function() {
-      var $list = $("#board .list[data-list-name='" + $(this).attr('data-tab-name') +"']");
-      //TODO: use jQuery .toggle instead code below.
-      if ($list.hasClass('show-list')) {
-        // Hide
-        $list.addClass('hide-list').removeClass('show-list').hide();
-        $(this).addClass('hide-list').removeClass('show-list');
-      } else {
-        // Show
-        $list.addClass('show-list').removeClass('hide-list').show();
-        $(this).addClass('show-list').removeClass('hide-list');
+      var tab = $(this).attr('data-tab-name');
+
+
+      if (tab == 'all') {
+        // 'Hide all/Show all' tab was clicked.
+        // TODO: think how to avoid code duplication here.
+        var status = $(this).hasClass('show-all') ? 'show-all' : 'hide-all';
+        if (status == 'show-all') {
+          $('#board .list').each(function() {
+            // Check if list has name to avoid 'Add new list...' placeholder.
+            if (getListName($(this))) {
+              // Hide all lists
+              $(this).addClass('hide-list').removeClass('show-list').hide();
+            }
+          });
+        }
+        else if (status == 'hide-all') {
+          $('#board .list').each(function() {
+            // Check if list has name to avoid 'Add new list...' placeholder.
+            if (getListName($(this))) {
+              // Show all lists
+              $(this).addClass('show-list').removeClass('hide-list').show();
+            }
+          });
+        } 
+        // Rebuild menu to set correct status.
+        buildMenu();
+      }
+      else {
+        // List tab was clicked.
+        var status = $(this).hasClass('show-list') ? 'show-list' : 'hide-list';
+        var $list = $("#board .list[data-list-name='" + tab +"']");
+        //TODO: use jQuery .toggle instead code below.
+        if (status == 'show-list') {
+          // Hide
+          $list.addClass('hide-list').removeClass('show-list').hide();
+          $(this).addClass('hide-list').removeClass('show-list');
+        } else {
+          // Show
+          $list.addClass('show-list').removeClass('hide-list').show();
+          $(this).addClass('show-list').removeClass('hide-list');
+        }
       }
     });
   };
