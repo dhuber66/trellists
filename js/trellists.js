@@ -10,31 +10,46 @@
 
 (function() {
 
+
   // This element appears last at page and we use it to add the Menu to page and set status for each List.
   $('#board .list form .js-open-add-list').waitUntilExists(function() {
     if ($('#trellists').length == 0) {
       // Insert bar placeholder to header. Should run only once.
       $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
 
-      // Set default 'show-list' status to all lists.
-      // TODO: store status in LocalStorage and save status of Lists there.
       $('#board .list').each(function() {
-        $(this).removeClass('hide-list').addClass('show-list');
+        var listName = getListName($(this));
+        if (listName) {
+          // Skip placeholder for adding new list (last element).
+          // Get previously stored status of this list from LocalStorage.
+          var listShowStatus = localStorage.getItem("trellists-" + listName);
+          // Default is 'show-list' class if there is no records in LocalStorage for this list.
+          $(this).addClass((listShowStatus != null) ? listShowStatus : "show-list");
+          if (listShowStatus == 'hide-list') $(this).hide();
+        }
       });
     }
 
     // Update Menu on List insert/archive/remove.
+    // TODO: implement removement of just archived/removed list.
     renderMenu();
   });
 
   // Update  list name on change. Already optimized.
   $('.list h2.list-header-name').waitUntilExists(function() {
     $('.list h2.list-header-name').bind('DOMSubtreeModified', function() {
-      var name = getListName($(this).parent().parent());
+      //TODO: this code fired 10 times on list name change and I must be improved.
+      var $list = $(this).parent().parent();
+      var oldListName = $list.attr('data-list-name');
+      var listName = getListName($list);
       // Somehow List title could be empty and we need to pass by this case.
       // Compare old title and new one to run only on title change but not subtree changes or etc.
-      if (name && name != $(this).parent().parent().attr('data-list-name')) {
+      if (listName && listName != oldListName) {
         renderMenu();
+        //Remove previous name and store new one.
+        var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
+        localStorage.removeItem("trellists-" + oldListName);
+        localStorage.setItem("trellists-" + listName, listShowStatus);
       }
     });
   });
@@ -50,7 +65,7 @@
   function getListName(list) {
     return list.find('.list-header-name').clone().children().remove().end().text();
   }
-  
+
   // This code was copied from trello's all.js file.
   // https://d78fikflryjgj.cloudfront.net/js/0e1c2ed27cb817938de179d9d36a9043/all.js
   var calcBoardLayout = function(){
@@ -77,7 +92,7 @@
     $('#board .list').each(function() {
       // Get only List's name without any sub-elements.
       var name = getListName($(this));
-      
+
       // This check allows to skip 'Add new list' widget.
       if (name) {
         // Create the tab in Menu for current List.
@@ -117,60 +132,69 @@
     if (hiddenTabs != 0 && shownTabs == 0) {
       tab.text('Show all').removeClass('show-all').addClass('hide-all');
     }
-    
+
     li += tab[0].outerHTML;
 
     // Replace tabs in the Menu.
     $('#trellists').empty().append(li);
-    
-    // If number of list are huge we need to manually resize window so 'Add new card...' widget 
+
+    // If number of list are huge we need to manually resize window so 'Add new card...' widget
     // and horizontall scroll bar will be shown at the bottom.
     calcBoardLayout();
+
+
 
     // Hides/shows List on click at tab.
     // We need to attach onClick behaviour for newly created tabs just after they was added to DOM
     // so we can't move out this code.
     $('#trellists li').click(function() {
-      var tab = $(this).attr('data-tab-name');
-      if (tab == 'all') {
+      var button = $(this).attr('data-tab-name');
+
+      if (button == 'all') {
         // 'Hide all/Show all' tab was clicked.
+        var allButtonPrevStatus = $(this).hasClass('show-all') ? 'show-all' : 'hide-all';
+
         // TODO: think how to avoid code duplication here.
-        var status = $(this).hasClass('show-all') ? 'show-all' : 'hide-all';
-        if (status == 'show-all') {
-          $('#board .list').each(function() {
-            // Check if list has name to avoid 'Add new list...' placeholder.
-            if (getListName($(this))) {
-              // Hide all lists
+        $('#board .list').each(function() {
+          var $list = $(this);
+          var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
+          var listName = getListName($list);
+
+
+          // Check if list has name to avoid 'Add new list...' placeholder.
+          if (getListName($(this))) {
+            if (allButtonPrevStatus == 'show-all') {
               $(this).addClass('hide-list').removeClass('show-list').hide();
+              localStorage.setItem("trellists-" + listName, "hide-list");
             }
-          });
-        }
-        else if (status == 'hide-all') {
-          $('#board .list').each(function() {
-            // Check if list has name to avoid 'Add new list...' placeholder.
-            if (getListName($(this))) {
-              // Show all lists
+            else if (allButtonPrevStatus == 'hide-all') {
               $(this).addClass('show-list').removeClass('hide-list').show();
+              localStorage.setItem("trellists-" + listName, "show-list");
             }
-          });
-        } 
+          }
+        });
         // Rebuild menu to set correct status.
         renderMenu();
       }
       else {
         // List tab was clicked.
-        var status = $(this).hasClass('show-list') ? 'show-list' : 'hide-list';
-        var $list = $("#board .list[data-list-name='" + tab +"']");
+        var $list = $("#board .list[data-list-name='" + button +"']");
+        var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
+        var listName = getListName($list);
         var allTab = $('#trellists li[data-tab-name=all]');
+
+        //Revert status of list when it was clicked.
+        localStorage.setItem("trellists-" + listName, (listShowStatus == 'show-list') ? 'hide-list' : 'show-list');
+
         //TODO: use jQuery .toggle instead code below.
-        if (status == 'show-list') {
+        if (listShowStatus == 'show-list') {
           // Hide related list
           $list.addClass('hide-list').removeClass('show-list').hide();
           // Update current tab.
           $(this).addClass('hide-list').removeClass('show-list');
           // Change 'Show all/Hide all' button.
-          allTab.text('Show all').removeClass('show-all').addClass('hide-all');          
-        } else {
+          allTab.text('Show all').removeClass('show-all').addClass('hide-all');
+        } else if (listShowStatus == 'hide-list') {
           // Show related list
           $list.addClass('show-list').removeClass('hide-list').show();
           // Update current tab.

@@ -10,7 +10,7 @@
     "matches": [ "*://trello.com/*" ],
     "run_at": "document_start"
   }],
-  "permissions": [ "tabs", "\u003Call_urls>" ],
+  "permissions": [ "tabs", "\u003Call_urls>", "storage" ],
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzfiXS6Li03uSvMv1bBfQBn8DgKdJ8a3JoD5EyA9PQQi1TdPykdwd2ughWLa/Jng31tBeEwp7PGnA0ZC8p2KYdZ9sUt1YpbircUFuylYEKZnw0Z06YCdIvusUwPFWFydy0u8nggyY8I5E5f0IDTAQ5ERmXM51QuR6jou5VflMISwIDAQAB",
   "manifest_version": 2,
   "name": "Trellists: Trello Lists Master",
