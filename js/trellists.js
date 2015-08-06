@@ -12,12 +12,12 @@
 
 
   // This element appears last at page and we use it to add the Menu to page and set status for each List.
-  $('#board .list form .js-open-add-list').waitUntilExists(function() {
+  $('#board .list-wrapper form .js-open-add-list').waitUntilExists(function() {
     if ($('#trellists').length == 0) {
       // Insert bar placeholder to header. Should run only once.
       $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
 
-      $('#board .list').each(function() {
+      $('#board .list-wrapper').each(function() {
         var listName = getListName($(this));
         if (listName) {
           // Skip placeholder for adding new list (last element).
@@ -36,8 +36,8 @@
   });
 
   // Update  list name on change. Already optimized.
-  $('.list h2.list-header-name').waitUntilExists(function() {
-    $('.list h2.list-header-name').bind('DOMSubtreeModified', function() {
+  $('.list-wrapper h2.list-header-name').waitUntilExists(function() {
+    $('.list-wrapper h2.list-header-name').bind('DOMSubtreeModified', function() {
       //TODO: this code fired 10 times on list name change and I must be improved.
       var $list = $(this).parent().parent();
       var oldListName = $list.attr('data-list-name');
@@ -89,7 +89,7 @@
     // TODO: store number of hidden and shown tabs in global variable or LocalStorage and update 'All' button depending on those numbers.
     var shownTabs = hiddenTabs = 0;
     // Get all Lists at board except placeholder for new List creation to add them to the Bar.
-    $('#board .list').each(function() {
+    $('#board .list-wrapper').each(function() {
       // Get only List's name without any sub-elements.
       var name = getListName($(this));
 
@@ -155,7 +155,7 @@
         var allButtonPrevStatus = $(this).hasClass('show-all') ? 'show-all' : 'hide-all';
 
         // TODO: think how to avoid code duplication here.
-        $('#board .list').each(function() {
+        $('#board .list-wrapper').each(function() {
           var $list = $(this);
           var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
           var listName = getListName($list);
@@ -178,7 +178,7 @@
       }
       else {
         // List tab was clicked.
-        var $list = $("#board .list[data-list-name='" + button +"']");
+        var $list = $("#board .list-wrapper[data-list-name='" + button +"']");
         var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
         var listName = getListName($list);
         var allTab = $('#trellists li[data-tab-name=all]');
