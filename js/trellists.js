@@ -10,25 +10,54 @@
 
 (function() {
 
+  // http://stackoverflow.com/a/7616484
+  String.prototype.hashCode = function() {
+    var hash = 0, i, chr, len;
+    if (this.length === 0) return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+      chr   = this.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
+  // This code was copied from trello's all.js file.
+  // https://d78fikflryjgj.cloudfront.net/js/0e1c2ed27cb817938de179d9d36a9043/all.js
+  function calcBoardLayout(){
+    var b,e,c,f;
+    f=$(window).height();
+    c=$("#header").outerHeight();
+    b=$(".header-banner:visible").outerHeight();
+    e=this.$(".board-header").outerHeight();
+    this.$(".board-canvas").height(f-(c+b+e));
+    //this.calcSidebarHeight();
+  };
+
 
   // This element appears last at page and we use it to add the Menu to page and set status for each List.
   $('#board .list-wrapper form .js-open-add-list').waitUntilExists(function() {
-    if ($('#trellists').length == 0) {
-      // Insert bar placeholder to header. Should run only once.
-      $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
+    // If menu already injected to page we have nothing to do.
+    if ($('#trellists').length) { return };
+    // Insert bar placeholder to header. Should run only once.
+    $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
 
-      $('#board .list-wrapper').each(function() {
-        var listName = getListName($(this));
-        if (listName) {
-          // Skip placeholder for adding new list (last element).
-          // Get previously stored status of this list from LocalStorage.
-          var listShowStatus = localStorage.getItem("trellists-" + listName);
-          // Default is 'show-list' class if there is no records in LocalStorage for this list.
-          $(this).addClass((listShowStatus != null) ? listShowStatus : "show-list");
-          if (listShowStatus == 'hide-list') $(this).hide();
+    $('#board .list-wrapper').each(function() {
+      var listName = getListName($(this));
+      // There is an empty list (placeholder for new lists) and we should skip it.
+      if (listName) {
+        // Get previously stored status of this list from LocalStorage.
+        var listShowStatus = localStorage.getItem("trellists-" + listName);
+        // By default all lists are shown.
+        $(this).addClass((listShowStatus != null) ? listShowStatus : "show-list");
+        if (listShowStatus == 'hide-list') {
+          $(this).hide();
         }
-      });
-    }
+        else {
+          $(this).show();
+        }
+      }
+    });
 
     // Update Menu on List insert/archive/remove.
     // TODO: implement removement of just archived/removed list.
@@ -66,18 +95,6 @@
     return list.find('.list-header-name').clone().children().remove().end().text();
   }
 
-  // This code was copied from trello's all.js file.
-  // https://d78fikflryjgj.cloudfront.net/js/0e1c2ed27cb817938de179d9d36a9043/all.js
-  var calcBoardLayout = function(){
-    var b,e,c,f;
-    f=$(window).height();
-    c=$("#header").outerHeight();
-    b=$(".header-banner:visible").outerHeight();
-    e=this.$(".board-header").outerHeight();
-    this.$(".board-canvas").height(f-(c+b+e));
-    //this.calcSidebarHeight();
-  };
-
   /**
    * Build Top Bar which shows titles of existing lists.
    * Each time new list created ate page we rebuild top bar.
@@ -95,14 +112,15 @@
 
       // This check allows to skip 'Add new list' widget.
       if (name) {
+        var hash = name.hashCode();
         // Create the tab in Menu for current List.
-        var tab = $('<li/>').attr('data-tab-name', name).text(name);
+        var tab = $('<li/>').attr('data-tab-name', hash).text(name);
 
         // Mark a List to be able to find it later.
         // TODO: find a way to aviod this kind of marking and search by List's name.
-        if ($(this).attr("data-list-name") != name) {
+        if ($(this).attr("data-list-name") != hash) {
           // Update List name in attribute only if it's necessary.
-          $(this).attr("data-list-name", name);
+          $(this).attr("data-list-name", hash);
         }
 
         // Tabs should duplicate status (hide/show) of actual List.
