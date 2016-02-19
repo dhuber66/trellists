@@ -18,11 +18,17 @@ This extension solves problem of horizontal scrolling and makes easier managemen
 * Status of each List represented by color: grey for hidden List and white for shown.
 
 Road Map:
-* Store state of Lists in LocalStorage so you shouldn't set state each time you opened board.
+* Store also name of board to avoid conflicts for the lists with the same names on different boards.
 
 
 
 Updates:
+
+2.5
+* Fixed bug with single qoutes.
+* Improved speed of menu rendering.
+* Added mutation-summary library.
+
 
 2.0
 * Fixed bugs https://trello.com/c/xNzKkl72 and https://trello.com/c/XolHwvsc which blocked adding new cards and hides horizontall scroll bar if board contain a huge amount of lists.
