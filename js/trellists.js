@@ -34,15 +34,16 @@
     //this.calcSidebarHeight();
   };
 
-
-  // This element appears last at page and we use it to add the Menu to page and set status for each List.
-  $('#board .list-wrapper form .js-open-add-list').waitUntilExists(function() {
-    // If menu already injected to page we have nothing to do.
-    if ($('#trellists').length) { return };
-    // Insert bar placeholder to header. Should run only once.
-    $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
-
-    $('#board .list-wrapper').each(function() {
+  // Add a placeholder for the list of all list in the page header.
+  new MutationSummary({
+    queries: [{
+      element: '.list-wrapper'
+    }],
+    callback: function() {
+      if (!$('#trellists').length) {
+        $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
+      }
+      // Restore state of each List.
       var listName = getListName($(this));
       // There is an empty list (placeholder for new lists) and we should skip it.
       if (listName) {
@@ -57,12 +58,10 @@
           $(this).show();
         }
       }
-    });
-
-    // Update Menu on List insert/archive/remove.
-    // TODO: implement removement of just archived/removed list.
-    renderMenu();
+      renderMenu();
+    }
   });
+
 
   // Update  list name on change. Already optimized.
   $('.list-wrapper h2.list-header-name').waitUntilExists(function() {
@@ -80,13 +79,6 @@
         localStorage.removeItem("trellists-" + oldListName);
         localStorage.setItem("trellists-" + listName, listShowStatus);
       }
-    });
-  });
-
-  // Update on List's drag-n-drop movements.
-  $('#board .placeholder').waitUntilExists(function() {
-    $('#board .placeholder').bind('DOMNodeRemovedFromDocument', function(e) {
-      renderMenu();
     });
   });
 
