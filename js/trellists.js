@@ -1,4 +1,3 @@
-// TODO: Store state of Lists in LocalStorage so you shouldn't set state each time you opened board.
 // TODO: 'just_logged_in' = true.
 // TODO: BUG: if lists has the same name they will be shown and hidden both at the same time.
 // TODO: Call calcBoardLayout(); when right menu hidden.
@@ -44,20 +43,22 @@
         $('<ul/>').attr('id', 'trellists').appendTo('.board-header');
       }
       // Restore state of each List.
-      var listName = getListName($(this));
-      // There is an empty list (placeholder for new lists) and we should skip it.
-      if (listName) {
-        // Get previously stored status of this list from LocalStorage.
-        var listShowStatus = localStorage.getItem("trellists-" + listName);
-        // By default all lists are shown.
-        $(this).addClass((listShowStatus != null) ? listShowStatus : "show-list");
-        if (listShowStatus == 'hide-list') {
-          $(this).hide();
+      $('.list-wrapper').each(function() {
+        var listName = getListName($(this));
+        // There is an empty list (placeholder for new lists) and we should skip it.
+        if (listName) {
+          // Get previously stored status of this list from LocalStorage.
+          var listShowStatus = localStorage.getItem("trellists-" + listName);
+          // By default all lists are shown.
+          $(this).addClass((listShowStatus != null) ? listShowStatus : "show-list");
+          if (listShowStatus == 'hide-list') {
+            $(this).hide();
+          }
+          else {
+            $(this).show();
+          }
         }
-        else {
-          $(this).show();
-        }
-      }
+      });
       renderMenu();
     }
   });

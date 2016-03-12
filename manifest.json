@@ -1,4 +1,5 @@
 {
+  "version": "2.6",
   "content_scripts": [{
     "all_frames": true,
     "css": [ "style.css" ],
@@ -19,7 +20,6 @@
   "description": "Allow to hide and show lists at Trello's boards.",
   "update_url": "http://clients2.google.com/service/update2/crx",
    "author": "Vlad Savitsky",
-  "version": "2.5",
   "icons": {
     "128": "icons/trellists.png",
     "16": "icons/trellists.png",
