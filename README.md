@@ -23,6 +23,8 @@ Road Map:
 
 
 Updates:
+2.6
+* Fixed issue when status of list wasn't restored from localStorage when switched to new board and then back again.
 
 2.5
 * Fixed bug with single qoutes.
