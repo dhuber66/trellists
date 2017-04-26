@@ -223,7 +223,6 @@
           var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
           var listName = getListName($list);
 
-
           // Check if list has name to avoid 'Add new list...' placeholder.
           if (getListName($(this))== "") {
             if (newButtonPrevStatus == 'show-all') {
