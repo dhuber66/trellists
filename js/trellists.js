@@ -224,7 +224,7 @@
           var listName = getListName($list);
 
           // Check if list has name to avoid 'Add new list...' placeholder.
-          if (getListName($(this))== "") {
+          if (listName == "") {
             if (newButtonPrevStatus == 'show-all') {
               $(this).addClass('hide-list').removeClass('show-list').hide();
               localStorage.setItem("trellists-" + listName, "hide-list");
