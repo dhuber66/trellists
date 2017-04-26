@@ -98,6 +98,7 @@
     // To count shown and hidden tabs we will use separate variables so we could switch 'Show all' and 'Hide all' tab.
     // TODO: store number of hidden and shown tabs in global variable or LocalStorage and update 'All' button depending on those numbers.
     var shownTabs = hiddenTabs = 0;
+    var hiddenNew = 0;
     // Get all Lists at board except placeholder for new List creation to add them to the Bar.
     $('#board .list-wrapper').each(function() {
       // Get only List's name without any sub-elements.
@@ -133,6 +134,21 @@
         }
         li += tab[0].outerHTML;
       }
+      else {
+        if ($(this).hasClass('show-list')) {
+          $(tab).addClass('show-list');
+          hiddenNew = 0;
+        }
+        else if ($(this).hasClass('hide-list')) {
+          $(tab).addClass('hide-list');
+          hiddenNew = 1;
+        }
+        else {
+          // for just created lists
+          $(tab).addClass('show-list');
+          hiddenNew = 0;
+        }
+      }
     });
 
     // Create the tab in Menu for current List.
@@ -142,6 +158,17 @@
     }
     if (hiddenTabs != 0 && shownTabs == 0) {
       tab.text('Show all').removeClass('show-all').addClass('hide-all');
+    }
+
+    li += tab[0].outerHTML;
+
+    // Create the tab in Menu for NEW.
+    var tab = $('<li/>').attr('data-tab-name', 'new').text('Hide new').addClass('show-all');
+    if (hiddenNew == 0) {
+      tab.text('Hide new').removeClass('hide-all').addClass('show-all');
+    }
+    if (hiddenNew != 0) {
+      tab.text('Show new').removeClass('show-all').addClass('hide-all');
     }
 
     li += tab[0].outerHTML;
@@ -179,6 +206,32 @@
               localStorage.setItem("trellists-" + listName, "hide-list");
             }
             else if (allButtonPrevStatus == 'hide-all') {
+              $(this).addClass('show-list').removeClass('hide-list').show();
+              localStorage.setItem("trellists-" + listName, "show-list");
+            }
+          }
+        });
+        // Rebuild menu to set correct status.
+        renderMenu();
+      }
+      else if (button == 'new') {
+        // 'Hide all/Show all' tab was clicked.
+        var newButtonPrevStatus = $(this).hasClass('show-all') ? 'show-all' : 'hide-all';
+
+        // TODO: think how to avoid code duplication here.
+        $('#board .list-wrapper').each(function() {
+          var $list = $(this);
+          var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
+          var listName = getListName($list);
+
+
+          // Check if list has name to avoid 'Add new list...' placeholder.
+          if (getListName($(this))== "") {
+            if (newButtonPrevStatus == 'show-all') {
+              $(this).addClass('hide-list').removeClass('show-list').hide();
+              localStorage.setItem("trellists-" + listName, "hide-list");
+            }
+            else if (newButtonPrevStatus == 'hide-all') {
               $(this).addClass('show-list').removeClass('hide-list').show();
               localStorage.setItem("trellists-" + listName, "show-list");
             }
