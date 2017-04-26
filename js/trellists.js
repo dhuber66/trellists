@@ -63,6 +63,7 @@
     }
   });
 
+
   // Update  list name on change. Already optimized.
   $('.list-wrapper h2.list-header-name').waitUntilExists(function() {
     $('.list-wrapper h2.list-header-name').bind('DOMSubtreeModified', function() {
@@ -179,8 +180,6 @@
     // and horizontall scroll bar will be shown at the bottom.
     calcBoardLayout();
 
-
-
     // Hides/shows List on click at tab.
     // We need to attach onClick behaviour for newly created tabs just after they was added to DOM
     // so we can't move out this code.
@@ -199,7 +198,7 @@
 
 
           // Check if list has name to avoid 'Add new list...' placeholder.
-          if (getListName($(this))) {
+          if (listName) {
             if (allButtonPrevStatus == 'show-all') {
               $(this).addClass('hide-list').removeClass('show-list').hide();
               localStorage.setItem("trellists-" + listName, "hide-list");
@@ -223,7 +222,7 @@
           var listShowStatus = ($list.hasClass("show-list") ? "show-list" : "hide-list");
           var listName = getListName($list);
 
-          // Check if list has name to avoid 'Add new list...' placeholder.
+          // Check if list has no name to adress 'Add new list...' placeholder.
           if (listName == "") {
             if (newButtonPrevStatus == 'show-all') {
               $(this).addClass('hide-list').removeClass('show-list').hide();
