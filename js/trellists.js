@@ -63,7 +63,6 @@
     }
   });
 
-
   // Update  list name on change. Already optimized.
   $('.list-wrapper h2.list-header-name').waitUntilExists(function() {
     $('.list-wrapper h2.list-header-name').bind('DOMSubtreeModified', function() {
